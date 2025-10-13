@@ -8,6 +8,7 @@ import mlflow.pytorch
 import mlflow.sklearn
 from mlflow.tracking import MlflowClient
 import logging
+import os
 from typing import Dict, Any, Optional, List
 import json
 import pandas as pd
@@ -20,27 +21,78 @@ class MLflowTracker:
     Comprehensive MLflow integration for experiment tracking
     """
     
-    def __init__(self, tracking_uri: str, experiment_name: str):
+    def __init__(self, tracking_uri: str = None, experiment_name: str = "default"):
+        # Ensure project-local mlflow artifacts and sqlite database are used to avoid readonly paths
+        project_root = os.getcwd()
+        local_db = os.path.join(project_root, 'mlflow.db')
+        local_mlruns = os.path.join(project_root, 'mlruns')
+        os.makedirs(local_mlruns, exist_ok=True)
+
+        # If no tracking_uri provided, use project-local sqlite
+        if not tracking_uri:
+            tracking_uri = f"sqlite:///{local_db}"
+
+        # Normalize to absolute sqlite tracking URI if sqlite provided
+        if tracking_uri.startswith('sqlite:') and '///' in tracking_uri:
+            # keep as is (absolute or relative path already included)
+            pass
+
         self.tracking_uri = tracking_uri
+        # Ensure MLflow uses the local tracking URI
+        mlflow.set_tracking_uri(self.tracking_uri)
+        os.environ['MLFLOW_TRACKING_URI'] = self.tracking_uri
+
+        # Initialize client
+        self.client = MlflowClient(self.tracking_uri)
         self.experiment_name = experiment_name
-        self.client = MlflowClient(tracking_uri)
-        
-        # Setup MLflow
-        mlflow.set_tracking_uri(tracking_uri)
-        
-        # Create or get experiment
+
+        # Create or get experiment, prefer local mlruns artifact location
         try:
-            experiment = mlflow.get_experiment_by_name(experiment_name)
+            # If experiment exists, check artifact location writability
+            experiment = mlflow.get_experiment_by_name(self.experiment_name)
             if experiment is None:
-                experiment_id = mlflow.create_experiment(experiment_name)
+                # Create with explicit artifact location in project
+                artifact_loc = f"file:{local_mlruns}"
+                experiment_id = mlflow.create_experiment(self.experiment_name, artifact_location=artifact_loc)
+                self.experiment_id = experiment_id
+                mlflow.set_experiment(self.experiment_name)
+                logging.info(f"✅ MLflow experiment created locally (experiment: {self.experiment_name})")
             else:
-                experiment_id = experiment.experiment_id
-            
-            self.experiment_id = experiment_id
-            mlflow.set_experiment(experiment_name)
-            
-            logging.info(f"✅ MLflow tracking initialized (experiment: {experiment_name})")
-            
+                # Verify artifact_location is writable; if not, create a local experiment fallback
+                exp_info = self.client.get_experiment(experiment.experiment_id)
+                artifact_location = exp_info.artifact_location or ''
+                writable = True
+                try:
+                    # artifact_location may be 'file:C:/path' - strip 'file:'
+                    check_path = artifact_location
+                    if check_path.startswith('file:'):
+                        check_path = check_path[5:]
+                    if not check_path:
+                        check_path = local_mlruns
+                    # Ensure directory exists
+                    os.makedirs(check_path, exist_ok=True)
+                    # Test write access by creating a temp file
+                    test_file = os.path.join(check_path, '.mlflow_write_test')
+                    with open(test_file, 'w') as f:
+                        f.write('test')
+                    os.remove(test_file)
+                except Exception:
+                    writable = False
+
+                if not writable:
+                    # Create a new experiment with suffix to ensure local artifact location
+                    new_name = f"{self.experiment_name}_local"
+                    artifact_loc = f"file:{local_mlruns}"
+                    experiment_id = mlflow.create_experiment(new_name, artifact_location=artifact_loc)
+                    self.experiment_id = experiment_id
+                    self.experiment_name = new_name
+                    mlflow.set_experiment(self.experiment_name)
+                    logging.warning(f"⚠️ Existing MLflow experiment artifact location not writable; created local experiment: {self.experiment_name}")
+                else:
+                    self.experiment_id = exp_info.experiment_id
+                    mlflow.set_experiment(self.experiment_name)
+                    logging.info(f"✅ MLflow tracking initialized (experiment: {self.experiment_name})")
+
         except Exception as e:
             logging.error(f"❌ MLflow initialization failed: {str(e)}")
             raise
