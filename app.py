@@ -6,6 +6,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import pandas as pd
+import gdown
+import joblib 
 import cv2
 import json
 import shutil
@@ -2351,34 +2353,43 @@ def display_alerts():
 # ==================================================================================
 @st.cache_resource
 def load_inference_system():
-    """Load and cache the inference system with Module 4 integration"""
+    """Load and cache the inference system with Module 4 integration and Google Drive fallback"""
     system = SmartNoduleInferenceSystem()
-    
-    # Try to load model
     MODEL_PATH = "smartnodule_memory_optimized_best.pth"
-    model_loaded = False
-    
-    # Try different locations
-    model_paths = [
-        MODEL_PATH,
-        f"./{MODEL_PATH}",
-        f"../{MODEL_PATH}",
-        f"C:\\Users\\suyas\\.vscode\\Smartnodule\\{MODEL_PATH}"
-    ]
-    
-    for path in model_paths:
-        if os.path.exists(path):
-            print(f"Loading model from: {path}")
-            model_loaded = system.load_model(path)
-            if model_loaded:
-                print("✅ Model loaded successfully!")
-                break
-            else:
-                print("❌ Model loading failed!")
-    
-    if not model_loaded:
-        print("❌ Model file not found in any location!")
-        model_loaded = False
+
+    # ✅ 1. Check local first (in case you run locally or uploaded manually)
+    if os.path.exists(MODEL_PATH):
+        st.info(f"Loading model from local path: {MODEL_PATH}")
+        model_loaded = system.load_model(MODEL_PATH)
+        if model_loaded:
+            st.success("✅ Model loaded successfully (local)!")
+            return system
+        else:
+            st.error("❌ Failed to load local model. Trying Google Drive...")
+    #https://drive.google.com/file/d/1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd/view?usp=sharing
+    # ✅ 2. Download from Google Drive if not present
+    file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"  # 🔸 Replace with actual Google Drive File ID
+    url = f"https://drive.google.com/uc?id={file_id}"
+
+    st.info("Downloading model file from Google Drive...")
+    try:
+        gdown.download(url, MODEL_PATH, quiet=False)
+    except Exception as e:
+        st.error(f"❌ Model download failed: {e}")
+        return None
+
+    # ✅ 3. Load the model after download
+    if os.path.exists(MODEL_PATH):
+        model_loaded = system.load_model(MODEL_PATH)
+        if model_loaded:
+            st.success("✅ Model downloaded & loaded successfully!")
+            return system
+        else:
+            st.error("❌ Model download succeeded but loading failed.")
+            return None
+    else:
+        st.error("❌ Model file could not be found after download.")
+        return None
     
     # Try to load case retrieval system
     retrieval_loaded = False
