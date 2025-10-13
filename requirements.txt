@@ -162,7 +162,6 @@ notebook==7.4.5
 notebook_shim==0.2.4
 numpy==2.2.6
 omegaconf==2.3.0
-opencv-python==4.12.0.88
 opencv-python-headless==4.12.0.88
 opentelemetry-api==1.36.0
 opentelemetry-sdk==1.36.0
@@ -290,5 +289,6 @@ wrapt==1.17.3
 yarl==1.20.1
 zc.lockfile==3.0.post1
 zipp==3.23.0
+
 
 
