@@ -2351,66 +2351,103 @@ def display_alerts():
 # ==================================================================================
 # ENHANCED SYSTEM LOADING WITH MODULE 4
 # ==================================================================================
-@st.cache_resource
 def load_inference_system():
-    """Load and cache the inference system with Module 4 integration and Google Drive fallback"""
-    # Check for loaded system in session state
-    if 'inference_system' in st.session_state:
-        system = st.session_state['inference_system']
-        # Make sure the model object is present!
-        if system.model is not None:
+    """Load the inference system robustly across Streamlit reloads.
+
+    Notes:
+    - Avoid relying on st.cache_resource for the torch model object (can be unstable across code reloads).
+    - Always ensure `st.session_state['inference_system']` and `st.session_state['model_loaded']` are set consistently.
+    - Try a few local paths first, then fall back to Google Drive download.
+    """
+    # If an inference system exists in session_state, prefer reusing it but ensure model is loaded
+    existing = st.session_state.get('inference_system')
+    MODEL_FILENAME = "smartnodule_memory_optimized_best.pth"
+
+    # Helper to try loading model into a given system instance from a path
+    def _try_load_into(system_obj, path):
+        try:
+            if not os.path.exists(path):
+                return False
+            # Free CUDA cache before heavy load attempts
+            try:
+                if torch.cuda.is_available():
+                    torch.cuda.empty_cache()
+            except Exception:
+                pass
+            loaded = system_obj.load_model(path)
+            return bool(loaded)
+        except Exception:
+            return False
+
+    # If there is an existing object, try to reuse it (reload model if needed)
+    if existing is not None:
+        system = existing
+        if getattr(system, 'model', None) is not None:
             st.session_state['model_loaded'] = True
             st.info("✅ Model already loaded in session state.")
             return system
+        else:
+            st.info("🔄 Existing inference system found but model is missing - attempting to (re)load model...")
+            # Try several candidate paths
+            model_paths = [
+                MODEL_FILENAME,
+                f"./{MODEL_FILENAME}",
+                f"../{MODEL_FILENAME}",
+                os.path.join(os.getcwd(), MODEL_FILENAME)
+            ]
+            model_loaded = False
+            for p in model_paths:
+                if _try_load_into(system, p):
+                    model_loaded = True
+                    st.success(f"✅ Model loaded into existing system from: {p}")
+                    break
 
+            # Try Drive fallback if not loaded
+            if not model_loaded:
+                file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"
+                url = f"https://drive.google.com/uc?id={file_id}"
+                st.info("Downloading model file from Google Drive as a fallback...")
+                try:
+                    gdown.download(url, MODEL_FILENAME, quiet=False)
+                except Exception as e:
+                    st.warning(f"Model download failed: {e}")
+
+                if os.path.exists(MODEL_FILENAME) and _try_load_into(system, MODEL_FILENAME):
+                    model_loaded = True
+                    st.success("✅ Model downloaded & loaded into existing system!")
+
+            st.session_state['inference_system'] = system
+            st.session_state['model_loaded'] = bool(model_loaded)
+            return system
+
+    # No existing system in session_state, create a fresh one and load
     system = SmartNoduleInferenceSystem()
-    MODEL_PATH = "smartnodule_memory_optimized_best.pth"
     model_loaded = False
 
-    # 1. Check local first
-    if os.path.exists(MODEL_PATH):
-        st.info(f"Loading model from local path: {MODEL_PATH}")
-        model_loaded = system.load_model(MODEL_PATH)
-        if model_loaded:
-            st.success("✅ Model loaded successfully (local)!")
-        else:
-            st.error("❌ Failed to load local model. Trying Google Drive...")
+    # Try local candidate paths first
+    candidate_paths = [MODEL_FILENAME, f"./{MODEL_FILENAME}", f"../{MODEL_FILENAME}", os.path.join(os.getcwd(), MODEL_FILENAME)]
+    for p in candidate_paths:
+        if _try_load_into(system, p):
+            model_loaded = True
+            st.success(f"✅ Model loaded successfully (local): {p}")
+            break
 
-    # If not loaded, try Google Drive download
+    # If not loaded, try Drive download
     if not model_loaded:
         file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"
         url = f"https://drive.google.com/uc?id={file_id}"
-
         st.info("Downloading model file from Google Drive...")
         try:
-            gdown.download(url, MODEL_PATH, quiet=False)
+            gdown.download(url, MODEL_FILENAME, quiet=False)
         except Exception as e:
-            st.error(f"❌ Model download failed: {e}")
-            st.session_state['model_loaded'] = False
-            st.session_state['retrieval_loaded'] = False
-            st.session_state['system_initialized'] = False
-            return None
+            st.warning(f"Model download failed: {e}")
 
-        # Try to load after download
-        if os.path.exists(MODEL_PATH):
-            model_loaded = system.load_model(MODEL_PATH)
-            if model_loaded:
-                st.success("✅ Model downloaded & loaded successfully!")
-            else:
-                st.error("❌ Model download succeeded but loading failed.")
-                st.session_state['model_loaded'] = False
-                st.session_state['retrieval_loaded'] = False
-                st.session_state['system_initialized'] = False
-                return None
+        if os.path.exists(MODEL_FILENAME) and _try_load_into(system, MODEL_FILENAME):
+            model_loaded = True
+            st.success("✅ Model downloaded & loaded successfully!")
         else:
-            st.error("❌ Model file could not be found after download.")
-            st.session_state['model_loaded'] = False
-            st.session_state['retrieval_loaded'] = False
-            st.session_state['system_initialized'] = False
-            return None
-
-    # Load case retrieval system
-    retrieval_loaded = False
+            st.error("❌ Model file could not be found or loaded.")
+            model_loaded = False
 
     # Load case retrieval system
     retrieval_loaded = False
@@ -4867,17 +4904,9 @@ project_directory/
                 except Exception as e:
                     st.warning(f"Could not check disk space: {e}")
 
-
-
-
 # ==================================================================================
 # RUN APPLICATION
 # ==================================================================================
 if __name__ == "__main__":
 
     main()
-
-
-
-
-
