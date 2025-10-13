@@ -1,0 +1,23 @@
+artifact_path: file:C:/Users/suyas/.vscode/smartnodule_project/mlruns/1/models/m-e4d8626c45f44c81aa867f5bf90544ad/artifacts
+flavors:
+  python_function:
+    config:
+      device: null
+    data: data
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.pytorch
+    pickle_module_name: mlflow.pytorch.pickle_module
+    python_version: 3.13.7
+  pytorch:
+    code: null
+    model_data: data
+    pytorch_version: 2.8.0+cpu
+mlflow_version: 3.3.2
+model_id: m-e4d8626c45f44c81aa867f5bf90544ad
+model_size_bytes: 4465
+model_uuid: m-e4d8626c45f44c81aa867f5bf90544ad
+prompts: null
+run_id: cfd637a3887d4d39829e6c3d50fe1d66
+utc_time_created: '2025-10-11 22:27:37.257352'

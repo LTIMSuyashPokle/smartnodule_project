@@ -1,0 +1,9 @@
+{
+  "title": "Patient-Friendly Report",
+  "template": "\n                YOUR CHEST X-RAY RESULTS\n                ========================\n                \n                Dear Patient,\n                \n                We have completed the analysis of your chest X-ray using advanced \n                artificial intelligence technology with enhanced processing capabilities.\n                \n                WHAT WE FOUND:\n                {patient_findings}\n                \n                WHAT THIS MEANS:\n                {patient_explanation}\n                \n                WHAT HAPPENS NEXT:\n                {next_steps}\n                \n                ABOUT OUR ENHANCED AI ANALYSIS:\n                - We used advanced bone suppression to see through ribs better\n                - Sophisticated artifact removal cleaned up the image quality\n                - Deep learning helped focus precisely on your lung areas\n                \n                IMPORTANT NOTES:\n                - This analysis was performed by enhanced AI technology and will be \n                  reviewed by your doctor\n                - Please discuss these results with your healthcare provider\n                - Do not make any medical decisions based solely on this report\n                \n                If you have questions, please contact your healthcare provider.\n                \n                SmartNodule Enhanced AI Analysis System\n                ",
+  "fields": [
+    "patient_findings",
+    "patient_explanation",
+    "next_steps"
+  ]
+}

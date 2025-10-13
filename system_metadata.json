@@ -1,0 +1,20 @@
+{
+  "patch_size": 224,
+  "random_seed": 42,
+  "total_patches": 1321,
+  "positive_patches": 921,
+  "negative_patches": 400,
+  "advanced_processed": 200,
+  "feature_dim": 2048,
+  "datasets_used": [
+    "VinBigData",
+    "NIH",
+    "LungNodule"
+  ],
+  "processing_steps": [
+    "bone_suppression",
+    "artifact_removal",
+    "deep_segmentation"
+  ],
+  "export_timestamp": "2025-09-21 07:52:43"
+}

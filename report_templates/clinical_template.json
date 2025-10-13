@@ -1,0 +1,14 @@
+{
+  "title": "Clinical Summary Report",
+  "template": "\n                CHEST IMAGING FINDINGS - CLINICAL SUMMARY\n                ========================================\n                \n                Patient: {age}-year-old {gender}\n                Examination: Enhanced AI Chest X-ray Analysis\n                \n                KEY FINDINGS:\n                {clinical_findings}\n                \n                CLINICAL SIGNIFICANCE:\n                {clinical_significance}\n                \n                AI PROCESSING ENHANCEMENTS:\n                - Advanced bone suppression applied for enhanced nodule visibility\n                - Comprehensive artifact removal for improved image quality\n                - Deep learning lung segmentation for precise anatomical focus\n                \n                SIMILAR CASES ANALYSIS:\n                Based on {n_similar_cases} similar historical cases:\n                {similar_cases_summary}\n                \n                RECOMMENDATIONS:\n                {clinical_recommendations}\n                \n                FOLLOW-UP:\n                {follow_up_instructions}\n                \n                Note: This enhanced AI analysis should be interpreted in conjunction \n                with clinical context and confirmed by a qualified radiologist.\n                ",
+  "fields": [
+    "age",
+    "gender",
+    "clinical_findings",
+    "clinical_significance",
+    "n_similar_cases",
+    "similar_cases_summary",
+    "clinical_recommendations",
+    "follow_up_instructions"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "index_type": "IndexFlatIP",
+  "embedding_dim": 2048,
+  "n_similar_cases": 5,
+  "metadata_weights": {
+    "age": 0.2,
+    "gender": 0.1,
+    "smoking_history": 0.3,
+    "location": 0.2,
+    "size": 0.2
+  }
+}

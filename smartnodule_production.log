@@ -1,0 +1,166 @@
+2025-10-10 11:39:04,598 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 11:39:04,599 - root - INFO - ✅ All required files found
+2025-10-10 11:39:09,205 - root - ERROR - ❌ Failed to start server: No module named 'models'
+2025-10-10 11:40:22,597 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 11:40:22,597 - root - INFO - ✅ All required files found
+2025-10-10 11:40:27,217 - root - ERROR - ❌ Failed to start server: attempted relative import beyond top-level package
+2025-10-10 11:49:07,504 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 11:49:07,513 - root - INFO - ✅ All required files found
+2025-10-10 11:49:12,955 - root - ERROR - ❌ Failed to start server: attempted relative import beyond top-level package
+2025-10-10 11:51:44,887 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 11:51:44,888 - root - INFO - ✅ All required files found
+2025-10-10 11:51:49,667 - root - ERROR - ❌ Failed to start server: No module named 'models'
+2025-10-10 12:09:12,992 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 12:09:13,009 - root - INFO - ✅ All required files found
+2025-10-10 12:09:23,594 - root - ERROR - ❌ Failed to start server: cannot import name 'SmartNoduleModel' from 'api.models' (C:\Users\suyas\.vscode\smartnodule_project\api\models.py)
+2025-10-10 12:30:38,144 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 12:30:38,145 - root - INFO - ✅ All required files found
+2025-10-10 12:30:42,890 - root - ERROR - ❌ Failed to start server: cannot import name 'SmartNoduleModel' from 'api.models' (C:\Users\suyas\.vscode\smartnodule_project\api\models.py)
+2025-10-10 12:31:42,990 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 12:31:42,991 - root - INFO - ✅ All required files found
+2025-10-10 12:31:47,466 - root - ERROR - ❌ Failed to start server: cannot import name 'SmartNoduleModel' from 'api.models' (C:\Users\suyas\.vscode\smartnodule_project\api\models.py)
+2025-10-10 16:20:17,766 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 16:20:17,771 - root - INFO - ✅ All required files found
+2025-10-10 16:20:57,695 - root - ERROR - ❌ Failed to start server: No module named 'jwt'
+2025-10-10 16:24:42,232 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 16:24:42,234 - root - INFO - ✅ All required files found
+2025-10-10 16:25:03,133 - root - ERROR - ❌ Failed to start server: `BaseSettings` has been moved to the `pydantic-settings` package. See https://docs.pydantic.dev/2.11/migration/#basesettings-has-moved-to-pydantic-settings for more details.
+
+For further information visit https://errors.pydantic.dev/2.11/u/import-error
+2025-10-10 16:38:11,105 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 16:38:11,106 - root - INFO - ✅ All required files found
+2025-10-10 16:38:21,463 - root - ERROR - ❌ Failed to start server: 21 validation errors for Settings
+API_HOST
+  Extra inputs are not permitted [type=extra_forbidden, input_value='localhost', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+API_PORT
+  Extra inputs are not permitted [type=extra_forbidden, input_value='8000', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+API_WORKERS
+  Extra inputs are not permitted [type=extra_forbidden, input_value='1', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+API_SECRET_KEY
+  Extra inputs are not permitted [type=extra_forbidden, input_value='your-secret-key-here-change-this', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+DATABASE_URL
+  Extra inputs are not permitted [type=extra_forbidden, input_value='sqlite:///./smartnodule.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+CASE_RETRIEVAL_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='case_retrieval.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+MODEL_VERSION
+  Extra inputs are not permitted [type=extra_forbidden, input_value='2.0.0', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+CONFIDENCE_THRESHOLD
+  Extra inputs are not permitted [type=extra_forbidden, input_value='0.8', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+METRICS_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='realtime_metrics.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+ALERTS_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='alerts.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+AUDIT_LOG_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='audit_log.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+USAGE_ANALYTICS_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='usage_analytics.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+CACHE_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='cache_system.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+CACHE_MAX_MEMORY
+  Extra inputs are not permitted [type=extra_forbidden, input_value='1000', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+FEATURE_EMBEDDINGS_PATH
+  Extra inputs are not permitted [type=extra_forbidden, input_value='case_retrieval/feature_embeddings.npy', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SMTP_SERVER
+  Extra inputs are not permitted [type=extra_forbidden, input_value='smtp.gmail.com', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SMTP_PORT
+  Extra inputs are not permitted [type=extra_forbidden, input_value='587', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SMTP_USERNAME
+  Extra inputs are not permitted [type=extra_forbidden, input_value='your-email@gmail.com', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SMTP_PASSWORD
+  Extra inputs are not permitted [type=extra_forbidden, input_value='your-app-password', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SLACK_WEBHOOK_URL
+  Extra inputs are not permitted [type=extra_forbidden, input_value='your-slack-webhook-url', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+MAX_REQUEST_SIZE
+  Extra inputs are not permitted [type=extra_forbidden, input_value='50MB', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+2025-10-10 16:54:32,847 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 16:54:32,848 - root - INFO - ✅ All required files found
+2025-10-10 16:54:42,192 - root - ERROR - ❌ Failed to start server: 17 validation errors for Settings
+DATABASE_URL
+  Extra inputs are not permitted [type=extra_forbidden, input_value='sqlite:///./smartnodule.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+CASE_RETRIEVAL_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='case_retrieval.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+MODEL_VERSION
+  Extra inputs are not permitted [type=extra_forbidden, input_value='2.0.0', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+CONFIDENCE_THRESHOLD
+  Extra inputs are not permitted [type=extra_forbidden, input_value='0.8', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+METRICS_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='realtime_metrics.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+ALERTS_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='alerts.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+AUDIT_LOG_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='audit_log.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+USAGE_ANALYTICS_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='usage_analytics.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+CACHE_DB
+  Extra inputs are not permitted [type=extra_forbidden, input_value='cache_system.db', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+CACHE_MAX_MEMORY
+  Extra inputs are not permitted [type=extra_forbidden, input_value='1000', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+FEATURE_EMBEDDINGS_PATH
+  Extra inputs are not permitted [type=extra_forbidden, input_value='case_retrieval/feature_embeddings.npy', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SMTP_SERVER
+  Extra inputs are not permitted [type=extra_forbidden, input_value='smtp.gmail.com', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SMTP_PORT
+  Extra inputs are not permitted [type=extra_forbidden, input_value='587', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SMTP_USERNAME
+  Extra inputs are not permitted [type=extra_forbidden, input_value='your-email@gmail.com', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SMTP_PASSWORD
+  Extra inputs are not permitted [type=extra_forbidden, input_value='your-app-password', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+SLACK_WEBHOOK_URL
+  Extra inputs are not permitted [type=extra_forbidden, input_value='your-slack-webhook-url', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+MAX_REQUEST_SIZE
+  Extra inputs are not permitted [type=extra_forbidden, input_value='50MB', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.11/v/extra_forbidden
+2025-10-10 16:56:11,497 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 16:56:11,497 - root - INFO - ✅ All required files found
+2025-10-10 16:56:18,925 - root - ERROR - ❌ Failed to start server: "Config" and "model_config" cannot be used together
+
+For further information visit https://errors.pydantic.dev/2.11/u/config-both
+2025-10-10 17:00:24,038 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 17:00:24,039 - root - INFO - ✅ All required files found
+2025-10-10 17:00:44,485 - root - ERROR - ❌ Failed to start server: No module named 'schedule'
+2025-10-10 17:01:09,889 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 17:01:09,890 - root - INFO - ✅ All required files found
+2025-10-10 17:01:23,804 - root - ERROR - ❌ Failed to start server: attempted relative import beyond top-level package
+2025-10-10 17:26:26,535 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 17:26:26,537 - root - INFO - ✅ All required files found
+2025-10-10 17:26:38,692 - root - ERROR - ❌ Failed to start server: attempted relative import beyond top-level package
+2025-10-10 17:47:59,767 - root - INFO - 🚀 Starting SmartNodule Production System...
+2025-10-10 17:47:59,768 - root - INFO - ✅ All required files found
+2025-10-10 17:48:08,880 - root - ERROR - ❌ Failed to start server: attempted relative import beyond top-level package
