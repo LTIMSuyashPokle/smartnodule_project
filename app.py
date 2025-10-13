@@ -2357,14 +2357,21 @@ def load_inference_system():
     system = SmartNoduleInferenceSystem()
     MODEL_PATH = "smartnodule_memory_optimized_best.pth"
 
-    # ✅ 1. Check local first (in case you run locally or uploaded manually)
+    # Check if model is already loaded in session state
+    if st.session_state.get('model_loaded', False):
+        st.info("✅ Model already loaded in session state.")
+        # Optionally: reload retrieval system if needed
+        return system
+
     model_loaded = False
-    # ✅ 1. Check local first (in case you run locally or uploaded manually)
+
+    # 1. Check local first
     if os.path.exists(MODEL_PATH):
         st.info(f"Loading model from local path: {MODEL_PATH}")
         model_loaded = system.load_model(MODEL_PATH)
         if model_loaded:
             st.success("✅ Model loaded successfully (local)!")
+            st.session_state['model_loaded'] = True
         else:
             st.error("❌ Failed to load local model. Trying Google Drive...")
 
@@ -2388,7 +2395,7 @@ def load_inference_system():
             model_loaded = system.load_model(MODEL_PATH)
             if model_loaded:
                 st.success("✅ Model downloaded & loaded successfully!")
-                st.session_state['model_loaded'] = True 
+                st.session_state['model_loaded'] = True
             else:
                 st.error("❌ Model download succeeded but loading failed.")
                 st.session_state['model_loaded'] = False
@@ -2397,12 +2404,12 @@ def load_inference_system():
                 return None
         else:
             st.error("❌ Model file could not be found after download.")
-            #st.session_state['model_loaded'] = False
+            st.session_state['model_loaded'] = False
             st.session_state['retrieval_loaded'] = False
             st.session_state['system_initialized'] = False
             return None
 
-    # Try to load case retrieval system
+    # Load case retrieval system
     retrieval_loaded = False
     case_paths = [
         ('case_retrieval/case_retrieval_index.faiss', 'case_retrieval/case_metadata.csv', 'case_retrieval/feature_embeddings.npy'),
@@ -2416,8 +2423,6 @@ def load_inference_system():
                 retrieval_loaded = True
                 break
 
-    # Set session state properly
-    st.session_state['model_loaded'] = model_loaded
     st.session_state['retrieval_loaded'] = retrieval_loaded
     st.session_state['system_initialized'] = True
 
@@ -2425,7 +2430,6 @@ def load_inference_system():
     if 'last_system_log' not in st.session_state:
         st.session_state.last_system_log = 0
 
-    # Log system metrics every 5 minutes
     current_time = time.time()
     if current_time - st.session_state.last_system_log > 60:  # 1 minute
         log_system_metrics()
@@ -2441,15 +2445,15 @@ def load_inference_system():
                 event_type=AuditEventType.SYSTEM_CONFIG_CHANGE,
                 user_id=st.session_state.get('user_id', 'system'),
                 timestamp=datetime.now(),
-                action_description=f"System initialized - Model: {'loaded' if model_loaded else 'failed'}, Retrieval: {'loaded' if retrieval_loaded else 'failed'}",
+                action_description=f"System initialized - Model: {'loaded' if st.session_state['model_loaded'] else 'failed'}, Retrieval: {'loaded' if retrieval_loaded else 'failed'}",
                 resource_id="smartnodule_system",
                 resource_type="application",
                 ip_address=None,
                 user_agent="streamlit_app",
                 request_id=st.session_state['current_session_id'],
-                outcome="success" if model_loaded else "partial",
+                outcome="success" if st.session_state['model_loaded'] else "partial",
                 metadata={
-                    'model_loaded': model_loaded,
+                    'model_loaded': st.session_state['model_loaded'],
                     'retrieval_loaded': retrieval_loaded,
                     'module4_available': MODULE4_AVAILABLE
                 }
@@ -2459,7 +2463,7 @@ def load_inference_system():
         except Exception as e:
             logger.warning(f"Failed to audit system initialization: {e}")
 
-    print(f"Final status - Model loaded: {model_loaded}, Retrieval loaded: {retrieval_loaded}")
+    print(f"Final status - Model loaded: {st.session_state['model_loaded']}, Retrieval loaded: {retrieval_loaded}")
     return system
 
 # ==================================================================================
@@ -4865,6 +4869,7 @@ project_directory/
 if __name__ == "__main__":
 
     main()
+
 
 
 
