@@ -2354,15 +2354,17 @@ def display_alerts():
 @st.cache_resource
 def load_inference_system():
     """Load and cache the inference system with Module 4 integration and Google Drive fallback"""
+    # Check for loaded system in session state
+    if 'inference_system' in st.session_state:
+        system = st.session_state['inference_system']
+        # Make sure the model object is present!
+        if system.model is not None:
+            st.session_state['model_loaded'] = True
+            st.info("✅ Model already loaded in session state.")
+            return system
+
     system = SmartNoduleInferenceSystem()
     MODEL_PATH = "smartnodule_memory_optimized_best.pth"
-
-    # Check if model is already loaded in session state
-    if st.session_state.get('model_loaded', False):
-        st.info("✅ Model already loaded in session state.")
-        # Optionally: reload retrieval system if needed
-        return system
-
     model_loaded = False
 
     # 1. Check local first
@@ -2371,13 +2373,12 @@ def load_inference_system():
         model_loaded = system.load_model(MODEL_PATH)
         if model_loaded:
             st.success("✅ Model loaded successfully (local)!")
-            st.session_state['model_loaded'] = True
         else:
             st.error("❌ Failed to load local model. Trying Google Drive...")
 
     # If not loaded, try Google Drive download
     if not model_loaded:
-        file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"  # 🔸 Replace with actual Google Drive File ID
+        file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"
         url = f"https://drive.google.com/uc?id={file_id}"
 
         st.info("Downloading model file from Google Drive...")
@@ -2395,7 +2396,6 @@ def load_inference_system():
             model_loaded = system.load_model(MODEL_PATH)
             if model_loaded:
                 st.success("✅ Model downloaded & loaded successfully!")
-                st.session_state['model_loaded'] = True
             else:
                 st.error("❌ Model download succeeded but loading failed.")
                 st.session_state['model_loaded'] = False
@@ -2411,6 +2411,9 @@ def load_inference_system():
 
     # Load case retrieval system
     retrieval_loaded = False
+
+    # Load case retrieval system
+    retrieval_loaded = False
     case_paths = [
         ('case_retrieval/case_retrieval_index.faiss', 'case_retrieval/case_metadata.csv', 'case_retrieval/feature_embeddings.npy'),
         ('case_retrieval/faiss_index.idx', 'case_retrieval/case_metadata.pkl', 'case_retrieval/features.npy'),
@@ -2422,7 +2425,11 @@ def load_inference_system():
             if system.load_case_retrieval_system(index_path, metadata_path, embeddings_path):
                 retrieval_loaded = True
                 break
-
+    if model_loaded:
+        st.session_state['model_loaded'] = True
+        st.session_state['inference_system'] = system
+    else:
+        st.session_state['model_loaded'] = False
     st.session_state['retrieval_loaded'] = retrieval_loaded
     st.session_state['system_initialized'] = True
 
@@ -4063,7 +4070,7 @@ def main():
     
     # Load system with spinner
     with st.spinner("Loading AI system..."):
-        inference_system = load_inference_system()
+        inference_system = st.session_state.get('inference_system') or load_inference_system()
     
     # Show critical error if model not loaded
     if not st.session_state.get('model_loaded', False):
@@ -4869,6 +4876,7 @@ project_directory/
 if __name__ == "__main__":
 
     main()
+
 
 
 
