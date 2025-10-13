@@ -2361,19 +2361,19 @@ def load_inference_system():
     model_loaded = False
     # ✅ 1. Check local first (in case you run locally or uploaded manually)
     if os.path.exists(MODEL_PATH):
-        st.info(f"Loading model from local path: {MODEL_PATH}")
+        #st.info(f"Loading model from local path: {MODEL_PATH}")
         model_loaded = system.load_model(MODEL_PATH)
-        if model_loaded:
-            st.success("✅ Model loaded successfully (local)!")
-        else:
-            st.error("❌ Failed to load local model. Trying Google Drive...")
+        # if model_loaded:
+        #     st.success("✅ Model loaded successfully (local)!")
+        # else:
+        #     st.error("❌ Failed to load local model. Trying Google Drive...")
 
     # If not loaded, try Google Drive download
     if not model_loaded:
         file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"  # 🔸 Replace with actual Google Drive File ID
         url = f"https://drive.google.com/uc?id={file_id}"
 
-        st.info("Downloading model file from Google Drive...")
+        #st.info("Downloading model file from Google Drive...")
         try:
             gdown.download(url, MODEL_PATH, quiet=False)
         except Exception as e:
@@ -4862,4 +4862,5 @@ project_directory/
 # RUN APPLICATION
 # ==================================================================================
 if __name__ == "__main__":
+
     main()
