@@ -2388,6 +2388,7 @@ def load_inference_system():
             model_loaded = system.load_model(MODEL_PATH)
             if model_loaded:
                 st.success("✅ Model downloaded & loaded successfully!")
+                st.session_state['model_loaded'] = True 
             else:
                 st.error("❌ Model download succeeded but loading failed.")
                 st.session_state['model_loaded'] = False
@@ -4864,4 +4865,5 @@ project_directory/
 if __name__ == "__main__":
 
     main()
+
 
