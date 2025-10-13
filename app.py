@@ -2397,7 +2397,7 @@ def load_inference_system():
                 return None
         else:
             st.error("❌ Model file could not be found after download.")
-            st.session_state['model_loaded'] = False
+            #st.session_state['model_loaded'] = False
             st.session_state['retrieval_loaded'] = False
             st.session_state['system_initialized'] = False
             return None
@@ -4865,5 +4865,6 @@ project_directory/
 if __name__ == "__main__":
 
     main()
+
 
 
