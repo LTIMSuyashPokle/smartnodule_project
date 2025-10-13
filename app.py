@@ -2358,39 +2358,49 @@ def load_inference_system():
     MODEL_PATH = "smartnodule_memory_optimized_best.pth"
 
     # ✅ 1. Check local first (in case you run locally or uploaded manually)
+    model_loaded = False
+    # ✅ 1. Check local first (in case you run locally or uploaded manually)
     if os.path.exists(MODEL_PATH):
         st.info(f"Loading model from local path: {MODEL_PATH}")
         model_loaded = system.load_model(MODEL_PATH)
         if model_loaded:
             st.success("✅ Model loaded successfully (local)!")
-            return system
         else:
             st.error("❌ Failed to load local model. Trying Google Drive...")
-    #https://drive.google.com/file/d/1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd/view?usp=sharing
-    # ✅ 2. Download from Google Drive if not present
-    file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"  # 🔸 Replace with actual Google Drive File ID
-    url = f"https://drive.google.com/uc?id={file_id}"
 
-    st.info("Downloading model file from Google Drive...")
-    try:
-        gdown.download(url, MODEL_PATH, quiet=False)
-    except Exception as e:
-        st.error(f"❌ Model download failed: {e}")
-        return None
+    # If not loaded, try Google Drive download
+    if not model_loaded:
+        file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"  # 🔸 Replace with actual Google Drive File ID
+        url = f"https://drive.google.com/uc?id={file_id}"
 
-    # ✅ 3. Load the model after download
-    if os.path.exists(MODEL_PATH):
-        model_loaded = system.load_model(MODEL_PATH)
-        if model_loaded:
-            st.success("✅ Model downloaded & loaded successfully!")
-            return system
-        else:
-            st.error("❌ Model download succeeded but loading failed.")
+        st.info("Downloading model file from Google Drive...")
+        try:
+            gdown.download(url, MODEL_PATH, quiet=False)
+        except Exception as e:
+            st.error(f"❌ Model download failed: {e}")
+            st.session_state['model_loaded'] = False
+            st.session_state['retrieval_loaded'] = False
+            st.session_state['system_initialized'] = False
             return None
-    else:
-        st.error("❌ Model file could not be found after download.")
-        return None
-    
+
+        # Try to load after download
+        if os.path.exists(MODEL_PATH):
+            model_loaded = system.load_model(MODEL_PATH)
+            if model_loaded:
+                st.success("✅ Model downloaded & loaded successfully!")
+            else:
+                st.error("❌ Model download succeeded but loading failed.")
+                st.session_state['model_loaded'] = False
+                st.session_state['retrieval_loaded'] = False
+                st.session_state['system_initialized'] = False
+                return None
+        else:
+            st.error("❌ Model file could not be found after download.")
+            st.session_state['model_loaded'] = False
+            st.session_state['retrieval_loaded'] = False
+            st.session_state['system_initialized'] = False
+            return None
+
     # Try to load case retrieval system
     retrieval_loaded = False
     case_paths = [
@@ -2398,18 +2408,18 @@ def load_inference_system():
         ('case_retrieval/faiss_index.idx', 'case_retrieval/case_metadata.pkl', 'case_retrieval/features.npy'),
         ('./case_retrieval_index.faiss', './case_metadata.csv', './feature_embeddings.npy')
     ]
-    
+
     for index_path, metadata_path, embeddings_path in case_paths:
         if os.path.exists(index_path) and os.path.exists(metadata_path):
             if system.load_case_retrieval_system(index_path, metadata_path, embeddings_path):
                 retrieval_loaded = True
                 break
-    
+
     # Set session state properly
     st.session_state['model_loaded'] = model_loaded
     st.session_state['retrieval_loaded'] = retrieval_loaded
     st.session_state['system_initialized'] = True
-    
+
     # Log initial system metrics
     if 'last_system_log' not in st.session_state:
         st.session_state.last_system_log = 0
@@ -2424,7 +2434,7 @@ def load_inference_system():
     if module4_systems.get('audit'):
         try:
             from monitoring.audit_logger import AuditEvent, AuditEventType
-            
+
             audit_event = AuditEvent(
                 event_id=f"system_init_{int(time.time())}",
                 event_type=AuditEventType.SYSTEM_CONFIG_CHANGE,
@@ -2443,11 +2453,11 @@ def load_inference_system():
                     'module4_available': MODULE4_AVAILABLE
                 }
             )
-            
+
             module4_systems['audit'].log_event(audit_event)
         except Exception as e:
             logger.warning(f"Failed to audit system initialization: {e}")
-    
+
     print(f"Final status - Model loaded: {model_loaded}, Retrieval loaded: {retrieval_loaded}")
     return system
 
