@@ -1,13 +1,1 @@
-git init
-
-git add .
-
-
-git commit -m "Add project with Git LFS"
-
-git branch -M main
-
-git push -u origin main
-
-
-git pull --rebase origin main
+Trained model link: https://drive.google.com/file/d/1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd/view?usp=drivesdk
