@@ -1,13 +1,9 @@
-# ENHANCED SMARTNODULE STREAMLIT APP - COMPLETE MODULE 4 INTEGRATION
-
 import streamlit as st
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import pandas as pd
-import gdown
-import joblib 
 import cv2
 import json
 import shutil
@@ -66,9 +62,6 @@ import plotly.express as px
 from plotly.subplots import make_subplots
 from mlops.experiment_tracker import MLflowTracker
 
-# ==================================================================================
-# MODULE 4 IMPORTS - NEW INTEGRATIONS
-# ==================================================================================
 try:
     # Import Module 4 components
     from monitoring.performance_metrics import RealTimeMetricsCollector, get_metrics_collector, PerformanceMonitor
@@ -100,10 +93,6 @@ if 'metrics_initialized' not in st.session_state:
     st.session_state.peak_memory = 0.0
     st.session_state.metrics_initialized = True
 
-
-# ------------------------------------------------------------------
-# Enhanced Session State Initialization
-# ------------------------------------------------------------------
 def initialize_session_state():
     """Initialize all session state variables"""
     defaults = {
@@ -378,9 +367,7 @@ st.markdown("""
     }
 </style>
 """, unsafe_allow_html=True)
-# ==================================================================================
-# MODULE 4 SYSTEM INITIALIZATION
-# ==================================================================================
+
 @st.cache_resource
 def initialize_module4_systems():
     """Initialize all Module 4 systems"""
@@ -473,9 +460,6 @@ def initialize_module4_systems():
 # Initialize systems
 module4_systems = initialize_module4_systems()
 
-# ==================================================================================
-# KEEP YOUR EXISTING MODEL CLASSES (UNCHANGED)
-# ==================================================================================
 from dataclasses import dataclass
 
 @dataclass
@@ -513,7 +497,7 @@ class MemoryOptimizedMedicalModel(nn.Module):
         super(MemoryOptimizedMedicalModel, self).__init__()
         self.backbone = timm.create_model(
             model_name,
-            pretrained=True,
+            pretrained=False,
             num_classes=0,
             drop_rate=0.2,
             drop_path_rate=0.1
@@ -557,9 +541,6 @@ class MemoryOptimizedMedicalModel(nn.Module):
             return logits, self.features
         return logits
 
-# ==================================================================================
-# ENHANCED INFERENCE SYSTEM WITH MODULE 4 INTEGRATION
-# ==================================================================================
 class SmartNoduleInferenceSystem:
     """Enhanced inference system with Module 4 integration"""
     
@@ -779,99 +760,6 @@ class SmartNoduleInferenceSystem:
                 )
             
             return None, None, error_msg
-
-
-    # def predict_with_uncertainty(self, image_tensor, request_id=None):
-    #     """Enhanced prediction with Module 4 monitoring"""
-    #     if self.model is None:
-    #         return None, None, "Model not loaded"
-        
-    #     start_time = time.time()
-    #     request_id = request_id or f"req_{int(time.time()*1000)}"
-        
-    #     try:
-    #         # Set deterministic seeds for consistency
-    #         torch.manual_seed(42)
-    #         torch.cuda.manual_seed_all(42)
-    #         np.random.seed(42)
-            
-    #         # Set deterministic behavior
-    #         torch.backends.cudnn.deterministic = True
-    #         torch.backends.cudnn.benchmark = False
-            
-    #         # Standard prediction (always the same)
-    #         self.model.eval()
-    #         with torch.no_grad():
-    #             standard_logit = self.model(image_tensor)
-    #             standard_prob = torch.sigmoid(standard_logit).item()
-            
-    #         logger.info(f"Standard prediction: {standard_prob:.4f}")
-            
-    #         # Use standard prediction as primary for consistency
-    #         primary_prob = standard_prob
-            
-    #         # Quick MC sampling with fixed seeds (for uncertainty estimation only)
-    #         mc_predictions = []
-    #         for i in range(10):  # Reduced from 20 for speed
-    #             torch.manual_seed(42 + i)  # Different seed per iteration
-    #             self.model.train()  # Enable dropout
-    #             with torch.no_grad():
-    #                 mc_logit = self.model(image_tensor)
-    #                 mc_prob = torch.sigmoid(mc_logit).item()
-    #                 mc_predictions.append(mc_prob)
-    #             self.model.eval()  # Back to eval
-            
-    #         # Calculate uncertainty
-    #         mc_mean = np.mean(mc_predictions)
-    #         mc_std = np.std(mc_predictions)
-    #         confidence = max(0.0, 1 - mc_std)
-            
-    #         predicted_class = "Nodule Detected" if primary_prob > 0.3 else "No Nodule"
-    #         uncertainty_level = 'Low' if mc_std < 0.05 else 'Medium' if mc_std < 0.15 else 'High'
-            
-    #         if primary_prob > 0.3:
-    #             confidence = primary_prob
-    #         else:
-    #             confidence = 1 - primary_prob
-
-    #         processing_time = time.time() - start_time
-            
-    #         result = {
-    #             'probability': primary_prob,
-    #             'mc_mean': mc_mean,
-    #             'mc_std': mc_std,
-    #             'confidence': confidence,
-    #             'predicted_class': predicted_class,
-    #             'uncertainty_level': uncertainty_level,
-    #             'mc_predictions': mc_predictions,
-    #             'processing_time': processing_time,
-    #             'request_id': request_id
-    #         }
-            
-    #         # Module 4 integrations
-    #         self._log_prediction_metrics(result, processing_time)
-    #         self._check_uncertain_case(result, image_tensor, request_id)
-    #         self._audit_prediction(result, request_id)
-            
-    #         logger.info(f"✅ CONSISTENT prediction: {primary_prob:.4f} (MC: {mc_mean:.4f}±{mc_std:.4f}) in {processing_time:.3f}s")
-    #         return result, image_tensor, None
-            
-    #     except Exception as e:
-    #         processing_time = time.time() - start_time
-    #         error_msg = f"Prediction failed: {str(e)}"
-    #         logger.error(error_msg)
-            
-    #         # Log error metrics
-    #         if self.metrics_collector:
-    #             self.metrics_collector.record_request_metric(
-    #                 endpoint="/predict",
-    #                 method="POST", 
-    #                 status_code=500,
-    #                 response_time=processing_time,
-    #                 error=str(e)
-    #             )
-            
-    #         return None, None, error_msg
     
     def _log_prediction_metrics(self, result, processing_time):
         """Log prediction metrics to Module 4 system"""
@@ -956,94 +844,6 @@ class SmartNoduleInferenceSystem:
             logger.error(f"Failed to process uncertain case: {e}")
             import traceback
             logger.error(f"Full traceback: {traceback.format_exc()}")
-
-
-
-    # def _check_uncertain_case(self, result, image_tensor, request_id):
-    #     """Check if case should be added to uncertainty queue - ENHANCED"""
-    #     if not self.uncertainty_queue:
-    #         return
-        
-    #     try:
-    #         uncertainty_level = result['uncertainty_level']
-    #         confidence = result['confidence']
-    #         probability = result['probability']
-            
-    #         # Enhanced criteria for uncertain cases
-    #         should_queue = False
-    #         priority = 1
-            
-    #         if uncertainty_level == 'High':
-    #             should_queue = True
-    #             priority = 3
-    #         elif confidence < 0.75:  # Lower confidence threshold
-    #             should_queue = True
-    #             priority = 2
-    #         elif 0.12 <= probability <= 0.4:  # Borderline probability range
-    #             should_queue = True
-    #             priority = 2 if probability <= 0.25 else 1
-    #         elif result['predicted_class'] == 'Possible Nodule - Review Needed':
-    #             should_queue = True
-    #             priority = 2
-            
-    #         if should_queue:
-    #             case_data = {
-    #                 'request_id': request_id,
-    #                 'probability': probability,
-    #                 'confidence': confidence,
-    #                 'uncertainty_level': uncertainty_level,
-    #                 'mc_std': result['mc_std'],
-    #                 'timestamp': datetime.now(),
-    #                 'image_shape': image_tensor.shape if image_tensor is not None else None,
-    #                 'predicted_class': result['predicted_class']
-    #             }
-                
-    #             self.uncertainty_queue.add_uncertain_case(
-    #                 case_id=request_id,
-    #                 image_data=image_tensor.cpu().numpy() if image_tensor is not None else None,
-    #                 ai_prediction=result,
-    #                 priority=priority
-    #             )
-                
-    #             logger.info(f"Added uncertain case {request_id} to queue (priority: {priority}, reason: {uncertainty_level} uncertainty, {confidence:.3f} confidence)")
-                
-    #     except Exception as e:
-    #         logger.warning(f"Failed to process uncertain case: {e}")
-
-    
-    # def _check_uncertain_case(self, result, image_tensor, request_id):
-    #     """Check if case should be added to uncertainty queue"""
-    #     if not self.uncertainty_queue:
-    #         return
-        
-    #     try:
-    #         uncertainty_level = result['uncertainty_level']
-    #         confidence = result['confidence']
-            
-    #         # Add to uncertain cases if high uncertainty or low confidence
-    #         if uncertainty_level == 'High' or confidence < 0.7:
-    #             case_data = {
-    #                 'request_id': request_id,
-    #                 'probability': result['probability'],
-    #                 'confidence': confidence,
-    #                 'uncertainty_level': uncertainty_level,
-    #                 'mc_std': result['mc_std'],
-    #                 'timestamp': datetime.now(),
-    #                 'image_shape': image_tensor.shape if image_tensor is not None else None
-    #             }
-                
-    #             priority = 3 if uncertainty_level == 'High' else 2 if confidence < 0.5 else 1
-    #             self.uncertainty_queue.add_uncertain_case(
-    #                 case_id=request_id,
-    #                 image_data=image_tensor.cpu().numpy() if image_tensor is not None else None,
-    #                 ai_prediction=result,
-    #                 priority=priority
-    #             )
-                
-    #             logger.info(f"Added uncertain case {request_id} to queue (priority: {priority})")
-                
-    #     except Exception as e:
-    #         logger.warning(f"Failed to process uncertain case: {e}")
     
     def _audit_prediction(self, result, request_id):
         """Audit log the prediction"""
@@ -1077,9 +877,6 @@ class SmartNoduleInferenceSystem:
             
         except Exception as e:
             logger.warning(f"Failed to audit prediction: {e}")
-    
-    # Keep your existing methods (load_case_retrieval_system, generate_explanation, etc.)
-    # [Include all your existing methods here - they remain unchanged]
     
     def load_case_retrieval_system(self, index_path, metadata_path, embeddings_path=None):
         """Load FAISS index and metadata with ENRICHED case details"""
@@ -1197,23 +994,6 @@ class SmartNoduleInferenceSystem:
                 self.case_metadata.loc[idx, 'diagnosis'] = 'Normal Chest X-ray'
         
         logger.info("✅ Case metadata enriched with clinical details")
-    
-    # def _apply_medical_preprocessing(self, image_array):
-    #     """Apply medical-specific preprocessing for better nodule detection"""
-    #     try:
-    #         # CLAHE for contrast enhancement
-    #         clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
-    #         enhanced = clahe.apply(image_array.astype(np.uint8))
-            
-    #         # Gaussian blur to reduce noise
-    #         denoised = cv2.GaussianBlur(enhanced, (3,3), 0)
-            
-    #         # Normalize
-    #         normalized = denoised.astype(np.float32) / 255.0
-            
-    #         return normalized
-    #     except:
-    #         return image_array.astype(np.float32) / 255.0
 
     def preprocess_image(self, image_array):
         """Preprocess uploaded image"""
@@ -1357,9 +1137,6 @@ class SmartNoduleInferenceSystem:
         
         return attention.reshape(1, 1, size, size)
 
-# ==================================================================================
-# KEEP YOUR EXISTING MedicalGradCAM CLASS (UNCHANGED)
-# ==================================================================================
 class MedicalGradCAM:
     """Precise medical-grade Grad-CAM for pulmonary nodule detection"""
     
@@ -1715,10 +1492,6 @@ class MedicalGradCAM:
         
         return combined_attention.reshape(1, 1, height, width)
 
-# ==================================================================================
-# MODULE 4 UI COMPONENTS
-# ==================================================================================
-
 def get_system_health():
     """Get comprehensive system health metrics"""
     try:
@@ -1755,7 +1528,6 @@ def get_system_health():
             'error': f"Failed to get system health: {str(e)}",
             'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         }
-
 
 def check_api_health():
     """Check if API is running and responsive"""
@@ -2235,96 +2007,6 @@ def display_uncertain_cases():
         logger.error(f"Display uncertain cases error: {e}")
         logger.error(f"Full traceback: {traceback.format_exc()}")
 
-# def display_uncertain_cases():
-#     """Display uncertain cases queue for expert review"""
-#     if not module4_systems.get('uncertainty_queue') or not hasattr(module4_systems.get('uncertainty_queue'), 'get_uncertain_cases'):
-#         st.warning("Uncertain cases queue not available")
-#         return
-    
-#     st.subheader("Uncertain Cases Queue")
-#     debug_uncertainty_queue()
-#     try:
-#         # Get uncertain cases
-#         uncertain_cases = module4_systems['uncertainty_queue'].get_uncertain_cases(limit=20)
-        
-#         if not uncertain_cases:
-#             st.info("✅ No uncertain cases in queue")
-#             return
-        
-#         st.write(f"Found {len(uncertain_cases)} uncertain cases requiring expert review:")
-        
-#         # Display cases in a table
-#         case_data = []
-#         for case in uncertain_cases:
-#             case_data.append({
-#                 'Case ID': case['case_id'][:12] + '...',
-#                 'Priority': '🔴 High' if case['priority'] == 3 else '🟡 Medium' if case['priority'] == 2 else '🟢 Low',
-#                 'Uncertainty Level': case['uncertainty_level'],
-#                 'Confidence': f"{case['confidence']:.3f}",
-#                 'Probability': f"{case['ai_prediction']['probability']:.3f}",
-#                 'Created': case['created_at'].strftime('%Y-%m-%d %H:%M'),
-#                 'Status': case['status']
-#             })
-        
-#         df = pd.DataFrame(case_data)
-#         st.dataframe(df, width='stretch')
-        
-#         # Expert annotation interface
-#         st.subheader("👨‍⚕️ Expert Review Interface")
-        
-#         if uncertain_cases:
-#             selected_case = st.selectbox(
-#                 "Select case for review:",
-#                 options=range(len(uncertain_cases)),
-#                 format_func=lambda x: f"Case {uncertain_cases[x]['case_id'][:12]}... (Priority: {uncertain_cases[x]['priority']})"
-#             )
-            
-#             case = uncertain_cases[selected_case]
-            
-#             col1, col2 = st.columns([2, 1])
-            
-#             with col1:
-#                 st.write("**Case Details:**")
-#                 st.write(f"- **Case ID:** {case['case_id']}")
-#                 st.write(f"- **AI Probability:** {case['ai_prediction']['probability']:.3f}")
-#                 st.write(f"- **Confidence:** {case['confidence']:.3f}")
-#                 st.write(f"- **Uncertainty:** {case['uncertainty_level']}")
-#                 st.write(f"- **MC Std:** {case['ai_prediction']['mc_std']:.4f}")
-            
-#             with col2:
-#                 st.write("**Expert Annotation:**")
-#                 expert_decision = st.radio(
-#                     "Your assessment:",
-#                     ["Nodule Present", "No Nodule", "Uncertain"]
-#                 )
-                
-#                 expert_confidence = st.slider(
-#                     "Confidence in assessment:",
-#                     0.1, 1.0, 0.8, 0.1
-#                 )
-                
-#                 comments = st.text_area(
-#                     "Comments:",
-#                     placeholder="Additional observations..."
-#                 )
-                
-#                 if st.button("Submit Expert Review"):
-#                     # Process expert annotation
-#                     annotation_data = {
-#                         'expert_decision': expert_decision,
-#                         'expert_confidence': expert_confidence,
-#                         'comments': comments,
-#                         'case_id': case['case_id'],
-#                         'timestamp': datetime.now()
-#                     }
-                    
-#                     st.session_state.uncertain_cases_queue.append(annotation_data)
-#                     st.success("✅ Expert review submitted!")
-#                     st.rerun()
-    
-#     except Exception as e:
-#         st.error(f"Failed to display uncertain cases: {e}")
-
 def display_alerts():
     """Display system alerts"""
     if not module4_systems.get('alerts'):
@@ -2348,132 +2030,61 @@ def display_alerts():
     except Exception as e:
         logger.warning(f"Failed to display alerts: {e}")
 
-# ==================================================================================
-# ENHANCED SYSTEM LOADING WITH MODULE 4
-# ==================================================================================
+@st.cache_resource
 def load_inference_system():
-    """Load the inference system robustly across Streamlit reloads.
-
-    Notes:
-    - Avoid relying on st.cache_resource for the torch model object (can be unstable across code reloads).
-    - Always ensure `st.session_state['inference_system']` and `st.session_state['model_loaded']` are set consistently.
-    - Try a few local paths first, then fall back to Google Drive download.
-    """
-    # If an inference system exists in session_state, prefer reusing it but ensure model is loaded
-    existing = st.session_state.get('inference_system')
-    MODEL_FILENAME = "smartnodule_memory_optimized_best.pth"
-
-    # Helper to try loading model into a given system instance from a path
-    def _try_load_into(system_obj, path):
-        try:
-            if not os.path.exists(path):
-                return False
-            # Free CUDA cache before heavy load attempts
-            try:
-                if torch.cuda.is_available():
-                    torch.cuda.empty_cache()
-            except Exception:
-                pass
-            loaded = system_obj.load_model(path)
-            return bool(loaded)
-        except Exception:
-            return False
-
-    # If there is an existing object, try to reuse it (reload model if needed)
-    if existing is not None:
-        system = existing
-        if getattr(system, 'model', None) is not None:
-            st.session_state['model_loaded'] = True
-            st.info("✅ Model already loaded in session state.")
-            return system
-        else:
-            st.info("🔄 Existing inference system found but model is missing - attempting to (re)load model...")
-            # Try several candidate paths
-            model_paths = [
-                MODEL_FILENAME,
-                f"./{MODEL_FILENAME}",
-                f"../{MODEL_FILENAME}",
-                os.path.join(os.getcwd(), MODEL_FILENAME)
-            ]
-            model_loaded = False
-            for p in model_paths:
-                if _try_load_into(system, p):
-                    model_loaded = True
-                    st.success(f"✅ Model loaded into existing system from: {p}")
-                    break
-
-            # Try Drive fallback if not loaded
-            if not model_loaded:
-                file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"
-                url = f"https://drive.google.com/uc?id={file_id}"
-                st.info("Downloading model file from Google Drive as a fallback...")
-                try:
-                    gdown.download(url, MODEL_FILENAME, quiet=False)
-                except Exception as e:
-                    st.warning(f"Model download failed: {e}")
-
-                if os.path.exists(MODEL_FILENAME) and _try_load_into(system, MODEL_FILENAME):
-                    model_loaded = True
-                    st.success("✅ Model downloaded & loaded into existing system!")
-
-            st.session_state['inference_system'] = system
-            st.session_state['model_loaded'] = bool(model_loaded)
-            return system
-
-    # No existing system in session_state, create a fresh one and load
+    """Load and cache the inference system with Module 4 integration"""
     system = SmartNoduleInferenceSystem()
+    
+    # Try to load model
+    MODEL_PATH = "smartnodule_memory_optimized_best.pth"
     model_loaded = False
-
-    # Try local candidate paths first
-    candidate_paths = [MODEL_FILENAME, f"./{MODEL_FILENAME}", f"../{MODEL_FILENAME}", os.path.join(os.getcwd(), MODEL_FILENAME)]
-    for p in candidate_paths:
-        if _try_load_into(system, p):
-            model_loaded = True
-            st.success(f"✅ Model loaded successfully (local): {p}")
-            break
-
-    # If not loaded, try Drive download
+    #C:\Users\T8624\.vscode\smartnodule_project\smartnodule_memory_optimized_best.pth
+    # Try different locations
+    model_paths = [
+        MODEL_PATH,
+        f"./{MODEL_PATH}",
+        f"../{MODEL_PATH}",
+        f"C:\\Users\\T8624\\.vscode\\smartnodule_project\\{MODEL_PATH}"
+    ]
+    
+    for path in model_paths:
+        if os.path.exists(path):
+            print(f"Loading model from: {path}")
+            model_loaded = system.load_model(path)
+            if model_loaded:
+                print("✅ Model loaded successfully!")
+                break
+            else:
+                print("❌ Model loading failed!")
+    
     if not model_loaded:
-        file_id = "1T6eM4ZKnlsLT8fcS64VmceiTaSe5Prwd"
-        url = f"https://drive.google.com/uc?id={file_id}"
-        st.info("Downloading model file from Google Drive...")
-        try:
-            gdown.download(url, MODEL_FILENAME, quiet=False)
-        except Exception as e:
-            st.warning(f"Model download failed: {e}")
-
-        if os.path.exists(MODEL_FILENAME) and _try_load_into(system, MODEL_FILENAME):
-            model_loaded = True
-            st.success("✅ Model downloaded & loaded successfully!")
-        else:
-            st.error("❌ Model file could not be found or loaded.")
-            model_loaded = False
-
-    # Load case retrieval system
+        print("❌ Model file not found in any location!")
+        model_loaded = False
+    
+    # Try to load case retrieval system
     retrieval_loaded = False
     case_paths = [
         ('case_retrieval/case_retrieval_index.faiss', 'case_retrieval/case_metadata.csv', 'case_retrieval/feature_embeddings.npy'),
         ('case_retrieval/faiss_index.idx', 'case_retrieval/case_metadata.pkl', 'case_retrieval/features.npy'),
         ('./case_retrieval_index.faiss', './case_metadata.csv', './feature_embeddings.npy')
     ]
-
+    
     for index_path, metadata_path, embeddings_path in case_paths:
         if os.path.exists(index_path) and os.path.exists(metadata_path):
             if system.load_case_retrieval_system(index_path, metadata_path, embeddings_path):
                 retrieval_loaded = True
                 break
-    if model_loaded:
-        st.session_state['model_loaded'] = True
-        st.session_state['inference_system'] = system
-    else:
-        st.session_state['model_loaded'] = False
+    
+    # Set session state properly
+    st.session_state['model_loaded'] = model_loaded
     st.session_state['retrieval_loaded'] = retrieval_loaded
     st.session_state['system_initialized'] = True
-
+    
     # Log initial system metrics
     if 'last_system_log' not in st.session_state:
         st.session_state.last_system_log = 0
 
+    # Log system metrics every 5 minutes
     current_time = time.time()
     if current_time - st.session_state.last_system_log > 60:  # 1 minute
         log_system_metrics()
@@ -2483,36 +2094,33 @@ def load_inference_system():
     if module4_systems.get('audit'):
         try:
             from monitoring.audit_logger import AuditEvent, AuditEventType
-
+            
             audit_event = AuditEvent(
                 event_id=f"system_init_{int(time.time())}",
                 event_type=AuditEventType.SYSTEM_CONFIG_CHANGE,
                 user_id=st.session_state.get('user_id', 'system'),
                 timestamp=datetime.now(),
-                action_description=f"System initialized - Model: {'loaded' if st.session_state['model_loaded'] else 'failed'}, Retrieval: {'loaded' if retrieval_loaded else 'failed'}",
+                action_description=f"System initialized - Model: {'loaded' if model_loaded else 'failed'}, Retrieval: {'loaded' if retrieval_loaded else 'failed'}",
                 resource_id="smartnodule_system",
                 resource_type="application",
                 ip_address=None,
                 user_agent="streamlit_app",
                 request_id=st.session_state['current_session_id'],
-                outcome="success" if st.session_state['model_loaded'] else "partial",
+                outcome="success" if model_loaded else "partial",
                 metadata={
-                    'model_loaded': st.session_state['model_loaded'],
+                    'model_loaded': model_loaded,
                     'retrieval_loaded': retrieval_loaded,
                     'module4_available': MODULE4_AVAILABLE
                 }
             )
-
+            
             module4_systems['audit'].log_event(audit_event)
         except Exception as e:
             logger.warning(f"Failed to audit system initialization: {e}")
-
-    print(f"Final status - Model loaded: {st.session_state['model_loaded']}, Retrieval loaded: {retrieval_loaded}")
+    
+    print(f"Final status - Model loaded: {model_loaded}, Retrieval loaded: {retrieval_loaded}")
     return system
 
-# ==================================================================================
-# ENHANCED UI FUNCTIONS (KEEP YOUR EXISTING ONES + NEW ONES)
-# ==================================================================================
 def create_patient_form():
     """Create patient information form with Module 4 tracking"""
     st.subheader("📋 Patient Information")
@@ -2633,9 +2241,6 @@ def display_prediction_results(results, image_array=None):
         - **Confidence:** {confidence*100:.1f}%
         """)
 
-# ========================================================================
-# FIXED display_gradcam_explanation function
-# ========================================================================
 def display_gradcam_explanation(explanation, original_image):
     """Enhanced visualization with lung region highlighting"""
     if explanation is None:
@@ -2777,10 +2382,6 @@ def display_gradcam_explanation(explanation, original_image):
         st.error(f"Visualization failed: {e}")
         logger.error(f"Grad-CAM visualization error: {e}")
 
-# ========================================================================
-# ADDITIONAL FIXES FOR BETTER GRAD-CAM VISUALIZATION
-# ========================================================================
-
 def create_enhanced_gradcam_visualization(explanation, original_image):
     """Create enhanced Grad-CAM visualization with multiple views"""
     
@@ -2909,30 +2510,6 @@ def debug_system_status():
     # Display alerts in sidebar
     display_alerts()
     
-    # if MODULE4_AVAILABLE and module4_systems:
-    #     st.sidebar.subheader("📊 Quick Metrics")
-        
-    #     try:
-    #         if module4_systems.get('metrics'):
-    #             quick_metrics = module4_systems['metrics'].get_real_time_metrics(minutes=5)
-                
-    #             # Fixed: Use correct key names from get_real_time_metrics()
-    #             requests_per_min = quick_metrics.get('requests_per_minute', 0)
-    #             error_rate = quick_metrics.get('error_rate', 0)
-    #             avg_response_time = quick_metrics.get('avg_response_time', 0)
-                
-    #             st.sidebar.metric("Requests/5min", f"{requests_per_min:.0f}")
-    #             st.sidebar.metric("Error Rate", f"{error_rate:.1f}%")
-    #             st.sidebar.metric("Avg Response", f"{avg_response_time:.2f}s")
-                
-    #     except Exception as e:
-    #         st.sidebar.write(f"Metrics: ❌ {str(e)[:30]}...")
-    #         # Debug: Show the actual error
-    #         st.sidebar.write(f"Debug: {e}")
-
-# ==================================================================================
-# KEEP YOUR EXISTING REPORT GENERATION CLASSES (UNCHANGED)
-# ==================================================================================
 class ProfessionalReportGenerator:
     def __init__(self):
         self.styles = getSampleStyleSheet()
@@ -3589,68 +3166,6 @@ def transfer_uncertain_cases_to_annotation():
         logger.error(f"❌ Failed to transfer uncertain cases: {e}")
         return 0
 
-# def transfer_uncertain_cases_to_annotation():
-#     """Transfer uncertain cases to annotation interface"""
-#     try:
-#         from active_learning.annotation_interface import MedicalAnnotationInterface
-        
-#         # Initialize annotation interface
-#         annotation_interface = MedicalAnnotationInterface()
-        
-#         # Get uncertain cases from uncertainty queue
-#         uncertainty_queue = module4_systems.get('uncertainty_queue')
-#         if not uncertainty_queue:
-#             logger.warning("Uncertainty queue not available")
-#             return 0
-        
-#         # Get pending uncertain cases
-#         uncertain_cases = uncertainty_queue.get_pending_cases(limit=20)
-        
-#         transferred_count = 0
-#         for case in uncertain_cases:
-#             try:
-#                 # Extract case data
-#                 case_id = case['case_id']
-#                 prediction = case['ai_prediction'] if 'ai_prediction' in case else case.get('prediction', {})
-#                 priority = case['priority']
-                
-#                 # Get image data from uncertain cases database
-#                 with sqlite3.connect("uncertain_cases.db") as conn:
-#                     cursor = conn.cursor()
-#                     cursor.execute('SELECT image_data FROM uncertain_cases WHERE case_id = ?', (case_id,))
-#                     result = cursor.fetchone()
-                    
-#                     if result:
-#                         import pickle
-#                         image_data = pickle.loads(result[0])
-                        
-#                         # Create annotation task
-#                         success = annotation_interface.create_annotation_task(
-#                             case_id=case_id,
-#                             image_data=image_data,
-#                             ai_prediction=prediction,
-#                             priority=priority,
-#                             patient_id=case.get('patient_id'),
-#                             clinical_history=case.get('clinical_history')
-#                         )
-                        
-#                         if success:
-#                             transferred_count += 1
-#                             logger.info(f"✅ Transferred case {case_id} to annotation interface")
-#                         else:
-#                             logger.warning(f"❌ Failed to transfer case {case_id}")
-            
-#             except Exception as e:
-#                 logger.error(f"Error transferring case {case.get('case_id', 'unknown')}: {e}")
-#                 continue
-        
-#         logger.info(f"✅ Transferred {transferred_count} uncertain cases to annotation interface")
-#         return transferred_count
-        
-#     except Exception as e:
-#         logger.error(f"❌ Failed to transfer uncertain cases: {e}")
-#         return 0
-
 def initialize_patient_database():
     """Initialize patient database for data management"""
     try:
@@ -3957,7 +3472,7 @@ def render_live_dashboard():
             <h2>{:.1%}</h2>
             <small>Last 24 hours</small>
         </div>
-        """.format(metrics['inference_metrics']['success_rate']), unsafe_allow_html=True)
+        """.format(metrics['inference_metrics']['success_rate']/100), unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
@@ -4094,10 +3609,6 @@ def render_live_dashboard():
     # Last updated timestamp
     st.markdown(f"*📅 Last updated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}*")
 
-
-# ==================================================================================
-# MAIN APPLICATION
-# ==================================================================================
 def main():
     """Main application with Module 4 integration"""
     
@@ -4107,7 +3618,7 @@ def main():
     
     # Load system with spinner
     with st.spinner("Loading AI system..."):
-        inference_system = st.session_state.get('inference_system') or load_inference_system()
+        inference_system = load_inference_system()
     
     # Show critical error if model not loaded
     if not st.session_state.get('model_loaded', False):
@@ -4150,9 +3661,6 @@ project_directory/
             "📊 Reports"
         ])
     
-    # ==================================================================================
-    # TAB 1: AI ANALYSIS (ENHANCED)
-    # ==================================================================================
     with tab1:
         st.markdown("## 🔍 AI Analysis & Report Generation")
         
@@ -4465,9 +3973,6 @@ project_directory/
             
             st.success("✅ Professional reports ready for download!")
     
-    # ==================================================================================
-    # TAB 2: REPORTS (SIMPLIFIED)
-    # ==================================================================================
     with tab2:
         st.markdown("## 📊 Report Management")
         
@@ -4503,9 +4008,6 @@ project_directory/
             # Add model-specific analytics here
             display_performance_metrics()
     
-    # ==================================================================================
-    # MODULE 4 TABS (IF AVAILABLE)
-    # ==================================================================================
     if MODULE4_AVAILABLE:
         with tab3:
             display_system_health()
@@ -4904,9 +4406,5 @@ project_directory/
                 except Exception as e:
                     st.warning(f"Could not check disk space: {e}")
 
-# ==================================================================================
-# RUN APPLICATION
-# ==================================================================================
 if __name__ == "__main__":
-
     main()
