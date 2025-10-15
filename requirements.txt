@@ -1,4 +1,4 @@
-﻿absl-py==2.3.1
+absl-py==2.3.1
 aiohappyeyeballs==2.6.1
 aiohttp==3.12.15
 aiohttp-retry==2.9.1
@@ -11,8 +11,6 @@ amqp==5.3.1
 annotated-types==0.7.0
 antlr4-python3-runtime==4.9.3
 anyio==4.10.0
-gdown
-joblib
 appdirs==1.4.4
 argon2-cffi==25.1.0
 argon2-cffi-bindings==25.1.0
@@ -162,6 +160,7 @@ notebook==7.4.5
 notebook_shim==0.2.4
 numpy==2.2.6
 omegaconf==2.3.0
+opencv-python==4.12.0.88
 opencv-python-headless==4.12.0.88
 opentelemetry-api==1.36.0
 opentelemetry-sdk==1.36.0
@@ -209,6 +208,8 @@ python-json-logger==3.3.0
 python-multipart==0.0.20
 pytokens==0.1.10
 pytz==2025.2
+pywin32==311
+pywinpty==3.0.0
 PyYAML==6.0.2
 pyzmq==27.0.2
 referencing==0.36.2
@@ -289,6 +290,3 @@ wrapt==1.17.3
 yarl==1.20.1
 zc.lockfile==3.0.post1
 zipp==3.23.0
-
-
-
